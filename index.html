@@ -9,7 +9,7 @@
       --bg:#0f172a; --panel:#111827; --card:#1f2937; --muted:#94a3b8; --text:#e5e7eb;
       --primary:#2563eb; --primary-2:#1d4ed8; --warning:#f59e0b; --border:#334155;
       --shadow:0 10px 25px rgba(0,0,0,.25); --radius:14px;
-      --success:#22c55e; --danger:#ef4444; --info:#3b82f6;
+      --success:#22c55e; --info:#3b82f6;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
@@ -29,9 +29,7 @@
     .btn:hover{background:var(--primary-2)}
     .btn:disabled{opacity:.55;cursor:not-allowed}
     .btn-success{background:var(--success)}
-    .btn-success:hover{filter:brightness(1.05)}
     .btn-info{background:var(--info)}
-    .btn-info:hover{filter:brightness(1.05)}
     .tabs{display:flex;gap:8px;border-bottom:1px solid var(--border);padding:10px 10px 0}
     .tab{background:transparent;color:var(--muted);border:1px solid transparent;border-top-left-radius:10px;border-top-right-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600}
     .tab.active{color:var(--text);background:var(--card);border-color:var(--border);border-bottom-color:var(--card)}
@@ -47,7 +45,7 @@
     .col{min-height:320px;background:#0b1220;border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column}
     .col-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-weight:700}
     .col-body{padding:10px;display:grid;gap:10px;align-content:start}
-    .status-agendado{color:#60a5fa}.status-pendiente{color:var(--warning)}.status-confirmado{color:#4ade80}.status-cancelado{color:#f87171}
+    .status-agendado{color:#60a5fa}.status-pendiente{color:#f59e0b}.status-confirmado{color:#4ade80}.status-cancelado{color:#f87171}
     .status-solicitado{color:#60a5fa}.status-enproceso{color:#f59e0b}.status-listo{color:#4ade80}.status-entregado{color:#22c55e}
     .apt-actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn-mini{padding:7px 9px;border-radius:8px;font-size:.8rem;border:1px solid var(--border);background:#111827;color:var(--text);cursor:pointer}
@@ -55,7 +53,6 @@
     .btn-mini:disabled{opacity:.45;cursor:not-allowed}
     .msg{margin-top:10px;color:var(--muted);font-size:.92rem}
     .ok{color:#4ade80}.err{color:#f87171}
-
     .pharm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
     .pharm-panel{background:#0b1220;border:1px solid var(--border);border-radius:12px;padding:12px}
     .pharm-panel h4{margin:0 0 12px}
@@ -115,14 +112,12 @@
           <div class="msg" style="margin:0">Actualización por <strong>PUT</strong> + Webhook POST</div>
           <button id="reloadBtn" class="btn">Recargar</button>
         </div>
-
         <div class="kanban">
           <div class="col"><div class="col-head status-agendado">Agendado <span id="count-agendado">0</span></div><div id="col-agendado" class="col-body"></div></div>
           <div class="col"><div class="col-head status-pendiente">Pendiente <span id="count-pendiente">0</span></div><div id="col-pendiente" class="col-body"></div></div>
           <div class="col"><div class="col-head status-confirmado">Confirmado <span id="count-confirmado">0</span></div><div id="col-confirmado" class="col-body"></div></div>
           <div class="col"><div class="col-head status-cancelado">Cancelado <span id="count-cancelado">0</span></div><div id="col-cancelado" class="col-body"></div></div>
         </div>
-
         <div id="dashMsg" class="msg"></div>
       </div>
 
@@ -151,33 +146,20 @@
             </div>
 
             <datalist id="medicationsList">
-              <option value="Ibuprofeno"></option>
-              <option value="Paracetamol"></option>
-              <option value="Loratadina"></option>
-              <option value="Cetirizina"></option>
-              <option value="Vitamina C"></option>
-              <option value="Ácido acetilsalicílico"></option>
-              <option value="Naproxeno"></option>
-              <option value="Omeprazol"></option>
-              <option value="Famotidina"></option>
-              <option value="Dextrometorfano"></option>
-              <option value="Guaifenesina"></option>
-              <option value="Difenhidramina"></option>
-              <option value="Pseudoefedrina"></option>
-              <option value="Loperamida"></option>
-              <option value="Subsalicilato de bismuto"></option>
-              <option value="Carbonato de calcio"></option>
-              <option value="Hidróxido de magnesio"></option>
-              <option value="Dimenhidrinato"></option>
-              <option value="Hidrocortisona crema"></option>
-              <option value="Clotrimazol crema"></option>
+              <option value="Ibuprofeno"></option><option value="Paracetamol"></option><option value="Loratadina"></option>
+              <option value="Cetirizina"></option><option value="Vitamina C"></option><option value="Ácido acetilsalicílico"></option>
+              <option value="Naproxeno"></option><option value="Omeprazol"></option><option value="Famotidina"></option>
+              <option value="Dextrometorfano"></option><option value="Guaifenesina"></option><option value="Difenhidramina"></option>
+              <option value="Pseudoefedrina"></option><option value="Loperamida"></option><option value="Subsalicilato de bismuto"></option>
+              <option value="Carbonato de calcio"></option><option value="Hidróxido de magnesio"></option><option value="Dimenhidrinato"></option>
+              <option value="Hidrocortisona crema"></option><option value="Clotrimazol crema"></option>
             </datalist>
 
             <div class="actions-row">
               <button id="phRequestBtn" class="btn btn-success">Solicitar</button>
               <button id="phClearBtn" class="btn btn-info">Limpiar</button>
             </div>
-            <div class="subtle">Estado se asigna automáticamente como <strong>Solicitado</strong>. Fecha de entrega: próximo día calendario.</div>
+            <div class="subtle">Estado automático: <strong>Solicitado</strong>. Fecha de entrega: próximo día calendario.</div>
             <div id="phCreateMsg" class="msg"></div>
             <div id="phCreatedCard" class="result-list" style="margin-top:10px"></div>
           </div>
@@ -199,22 +181,10 @@
         </div>
 
         <div class="kanban">
-          <div class="col">
-            <div class="col-head status-solicitado">Solicitado <span id="ph-count-requested">0</span></div>
-            <div id="ph-col-requested" class="col-body"></div>
-          </div>
-          <div class="col">
-            <div class="col-head status-enproceso">En proceso <span id="ph-count-processing">0</span></div>
-            <div id="ph-col-processing" class="col-body"></div>
-          </div>
-          <div class="col">
-            <div class="col-head status-listo">Listo para retirar <span id="ph-count-ready">0</span></div>
-            <div id="ph-col-ready" class="col-body"></div>
-          </div>
-          <div class="col">
-            <div class="col-head status-entregado">Entregado <span id="ph-count-delivered">0</span></div>
-            <div id="ph-col-delivered" class="col-body"></div>
-          </div>
+          <div class="col"><div class="col-head status-solicitado">Solicitado <span id="ph-count-requested">0</span></div><div id="ph-col-requested" class="col-body"></div></div>
+          <div class="col"><div class="col-head status-enproceso">En proceso <span id="ph-count-processing">0</span></div><div id="ph-col-processing" class="col-body"></div></div>
+          <div class="col"><div class="col-head status-listo">Listo para retirar <span id="ph-count-ready">0</span></div><div id="ph-col-ready" class="col-body"></div></div>
+          <div class="col"><div class="col-head status-entregado">Entregado <span id="ph-count-delivered">0</span></div><div id="ph-col-delivered" class="col-body"></div></div>
         </div>
         <div id="phDashMsg" class="msg"></div>
       </div>
@@ -224,10 +194,15 @@
   <script>
     const API_BASE = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Appointments";
     const WEBHOOK_URL = "https://hooks.us.webexconnect.io/events/P0A7E5ZV0L";
+    const PHARM_API = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Pharmacy";
+	const PHARM_WEBHOOK_URL = "https://hooks.us.webexconnect.io/events/IRAA7OGWPP";
 
     let APPOINTMENTS_CACHE = [];
     let isUpdating = false;
+    let PHARM_CACHE = [];
+    let phUpdating = false;
 
+    // Tabs
     document.querySelectorAll(".tab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
@@ -237,6 +212,7 @@
       });
     });
 
+    // Copy
     const copyMsg = document.getElementById("copyMsg");
     document.querySelectorAll("[data-copy]").forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -251,6 +227,7 @@
       });
     });
 
+    // ===== Citas =====
     const normalizeStatus = (s = "") => {
       const v = String(s).trim().toLowerCase();
       if (v === "agendado") return "Agendado";
@@ -259,7 +236,6 @@
       if (v === "cancelado") return "Cancelado";
       return "Pendiente";
     };
-
     const getResourceId = (apt) => apt.aptId ?? apt.id;
 
     function setActionButtonsDisabled(disabled) {
@@ -301,9 +277,7 @@
       const id = getResourceId(apt);
       const payload = { ...apt, appointmentStatus: newStatus };
       const res = await fetch(`${API_BASE}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`PUT failed: ${res.status}`);
       return res.json();
@@ -311,9 +285,7 @@
 
     async function postWebhook(updatedRecord) {
       const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedRecord)
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(updatedRecord)
       });
       if (!res.ok) throw new Error(`Webhook failed: ${res.status}`);
       return res;
@@ -329,27 +301,16 @@
 
     async function searchByEmail() {
       const email = emailInput.value.trim().toLowerCase();
-      searchResults.innerHTML = "";
-      searchMsg.textContent = "";
-      if (!email) {
-        searchMsg.textContent = "Ingrese un email para buscar.";
-        searchMsg.className = "msg err";
-        return;
-      }
+      searchResults.innerHTML = ""; searchMsg.textContent = "";
+      if (!email) { searchMsg.textContent = "Ingrese un email para buscar."; searchMsg.className = "msg err"; return; }
       try {
         const data = await fetchAppointments();
         const matches = data.filter(a => (a.email || "").toLowerCase() === email);
-        if (!matches.length) {
-          searchMsg.textContent = "No se encontraron citas para ese email.";
-          searchMsg.className = "msg";
-          return;
-        }
+        if (!matches.length) { searchMsg.textContent = "No se encontraron citas para ese email."; searchMsg.className = "msg"; return; }
         searchResults.innerHTML = matches.map(cardHTML).join("");
-        searchMsg.textContent = `Se encontraron ${matches.length} cita(s).`;
-        searchMsg.className = "msg ok";
+        searchMsg.textContent = `Se encontraron ${matches.length} cita(s).`; searchMsg.className = "msg ok";
       } catch (err) {
-        searchMsg.textContent = `Error al buscar: ${err.message}`;
-        searchMsg.className = "msg err";
+        searchMsg.textContent = `Error al buscar: ${err.message}`; searchMsg.className = "msg err";
       }
     }
 
@@ -374,56 +335,37 @@
     }
 
     async function loadDashboard() {
-      dashMsg.textContent = "Cargando citas...";
-      dashMsg.className = "msg";
+      dashMsg.textContent = "Cargando citas..."; dashMsg.className = "msg";
       try {
         APPOINTMENTS_CACHE = await fetchAppointments();
         renderDashboard(APPOINTMENTS_CACHE);
-        dashMsg.textContent = `Citas cargadas: ${APPOINTMENTS_CACHE.length}`;
-        dashMsg.className = "msg ok";
+        dashMsg.textContent = `Citas cargadas: ${APPOINTMENTS_CACHE.length}`; dashMsg.className = "msg ok";
       } catch (err) {
-        dashMsg.textContent = `Error cargando dashboard: ${err.message}`;
-        dashMsg.className = "msg err";
+        dashMsg.textContent = `Error cargando dashboard: ${err.message}`; dashMsg.className = "msg err";
       }
     }
 
     window.updateStatus = async function(id, newStatus) {
       if (isUpdating) return;
-
-      isUpdating = true;
-      setActionButtonsDisabled(true);
-      dashMsg.textContent = `Actualizando #${id} a "${newStatus}"...`;
-      dashMsg.className = "msg";
-
+      isUpdating = true; setActionButtonsDisabled(true);
+      dashMsg.textContent = `Actualizando #${id} a "${newStatus}"...`; dashMsg.className = "msg";
       try {
         const apt = APPOINTMENTS_CACHE.find(a => String(getResourceId(a)) === String(id));
         if (!apt) throw new Error("No se encontró la cita en caché.");
-
         const updated = await putAppointmentStatus(apt, newStatus);
-
         const idx = APPOINTMENTS_CACHE.findIndex(a => String(getResourceId(a)) === String(id));
         if (idx >= 0) APPOINTMENTS_CACHE[idx] = updated;
-
         renderDashboard(APPOINTMENTS_CACHE);
-
         await postWebhook(updated);
-
-        dashMsg.textContent = `Cita #${id} actualizada y webhook enviado correctamente.`;
-        dashMsg.className = "msg ok";
+        dashMsg.textContent = `Cita #${id} actualizada y webhook enviado correctamente.`; dashMsg.className = "msg ok";
       } catch (err) {
-        dashMsg.textContent = `No se pudo completar la operación: ${err.message}`;
-        dashMsg.className = "msg err";
+        dashMsg.textContent = `No se pudo completar la operación: ${err.message}`; dashMsg.className = "msg err";
       } finally {
-        isUpdating = false;
-        setActionButtonsDisabled(false);
+        isUpdating = false; setActionButtonsDisabled(false);
       }
     };
 
-    const PHARM_API = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Pharmacy";
-
-    let PHARM_CACHE = [];
-    let phUpdating = false;
-
+    // ===== Farmacia =====
     const phFields = {
       firstName: document.getElementById("phFirstName"),
       lastName: document.getElementById("phLastName"),
@@ -436,7 +378,6 @@
       med3: document.getElementById("phMed3"),
       qty3: document.getElementById("phQty3")
     };
-
     const phCreateMsg = document.getElementById("phCreateMsg");
     const phCreatedCard = document.getElementById("phCreatedCard");
     const phSearchInput = document.getElementById("phSearchInput");
@@ -447,12 +388,8 @@
     const phReloadBtn = document.getElementById("phReloadBtn");
 
     function mmddyyyyTomorrow() {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      const yyyy = d.getFullYear();
-      return `${mm}/${dd}/${yyyy}`;
+      const d = new Date(); d.setDate(d.getDate() + 1);
+      return `${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}/${d.getFullYear()}`;
     }
 
     function sanitizeMedQty(med, qty) {
@@ -463,36 +400,25 @@
     }
 
     function clearPhForm() {
-      phFields.firstName.value = "";
-      phFields.lastName.value = "";
-      phFields.phone.value = "";
-      phFields.email.value = "";
-      phFields.med1.value = "";
-      phFields.qty1.value = "";
-      phFields.med2.value = "";
-      phFields.qty2.value = "";
-      phFields.med3.value = "";
-      phFields.qty3.value = "";
-      phCreateMsg.textContent = "";
-      phCreateMsg.className = "msg";
+      Object.values(phFields).forEach(f => f.value = "");
+      phCreateMsg.textContent = ""; phCreateMsg.className = "msg";
     }
+    document.getElementById("phClearBtn").addEventListener("click", clearPhForm);
 
     function renderPhMedicationLines(order) {
       const rows = [];
-      for (let i = 1; i <= 3; i++) {
+      for (let i=1;i<=3;i++){
         const med = String(order[`medication${i}`] ?? "").trim();
         const qty = Number(order[`quantity${i}`] ?? 0);
-        if (med && med.toUpperCase() !== "N/A" && qty > 0) {
-          rows.push(`<div><small style="color:var(--muted)">• ${med}:</small> ${qty}</div>`);
-        }
+        if (med && med.toUpperCase() !== "N/A" && qty > 0) rows.push(`<div><small style="color:var(--muted)">• ${med}:</small> ${qty}</div>`);
       }
       return rows.join("") || `<div><small style="color:var(--muted)">Sin medicamentos seleccionados</small></div>`;
     }
 
-    function phCardHTML(order, forDashboard = false) {
+    function phCardHTML(order, withActions = true) {
       const id = order.id ?? "-";
       const status = String(order.Status || "Solicitado");
-      const nextButtons = ["Solicitado", "En proceso", "Listo para retirar", "Entregado"]
+      const nextButtons = ["Solicitado","En proceso","Listo para retirar","Entregado"]
         .filter(s => s !== status)
         .map(s => `<button class="btn-mini btn-mini-ph" onclick="updatePhStatus('${id}','${s}')" ${phUpdating ? "disabled" : ""}>${s}</button>`)
         .join("");
@@ -508,7 +434,7 @@
           <div><small style="color:var(--muted)">Entrega:</small> ${order.deliveryDate ?? "-"}</div>
           <div><small style="color:var(--muted)">Estado:</small> ${status}</div>
           <div>${renderPhMedicationLines(order)}</div>
-          ${forDashboard ? `<div class="apt-actions">${nextButtons}</div>` : ""}
+          ${withActions ? `<div class="apt-actions">${nextButtons}</div>` : ""}
         </div>
       `;
     }
@@ -521,37 +447,26 @@
 
     async function phCreate(payload) {
       const res = await fetch(PHARM_API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(`POST failed: ${res.status}`);
       return res.json();
     }
 
     async function phPut(order, newStatus) {
-      const id = order.id;
-      const payload = { ...order, Status: newStatus };
-      const res = await fetch(`${PHARM_API}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+      const res = await fetch(`${PHARM_API}/${order.id}`, {
+        method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ ...order, Status:newStatus })
       });
       if (!res.ok) throw new Error(`PUT failed: ${res.status}`);
       return res.json();
     }
 
-    document.getElementById("phClearBtn").addEventListener("click", clearPhForm);
-
     document.getElementById("phRequestBtn").addEventListener("click", async () => {
-      phCreateMsg.textContent = "";
-      phCreatedCard.innerHTML = "";
-
+      phCreateMsg.textContent = ""; phCreatedCard.innerHTML = "";
       const firstName = phFields.firstName.value.trim();
       const lastName = phFields.lastName.value.trim();
       const phoneNumber = phFields.phone.value.trim();
       const email = phFields.email.value.trim();
-
       if (!firstName || !lastName || !phoneNumber || !email) {
         phCreateMsg.textContent = "Complete Nombre, Apellido, Teléfono y Email.";
         phCreateMsg.className = "msg err";
@@ -563,25 +478,19 @@
       const m3 = sanitizeMedQty(phFields.med3.value, phFields.qty3.value);
 
       const payload = {
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        medication1: m1.medication,
-        quantity1: m1.quantity,
-        medication2: m2.medication,
-        quantity2: m2.quantity,
-        medication3: m3.medication,
-        quantity3: m3.quantity,
-        Status: "Solicitado",
-        deliveryDate: mmddyyyyTomorrow()
+        firstName, lastName, phoneNumber, email,
+        medication1:m1.medication, quantity1:m1.quantity,
+        medication2:m2.medication, quantity2:m2.quantity,
+        medication3:m3.medication, quantity3:m3.quantity,
+        Status:"Solicitado",
+        deliveryDate:mmddyyyyTomorrow()
       };
 
       try {
         const created = await phCreate(payload);
         phCreateMsg.textContent = `Pedido creado correctamente (#${created.id}).`;
         phCreateMsg.className = "msg ok";
-        phCreatedCard.innerHTML = phCardHTML(created, false);
+        phCreatedCard.innerHTML = phCardHTML(created, true); // con botones
         await loadPhDashboard();
       } catch (err) {
         phCreateMsg.textContent = `No se pudo crear el pedido: ${err.message}`;
@@ -591,42 +500,28 @@
 
     function phMatches(order, term) {
       const t = term.toLowerCase();
-      const values = [
+      return [
         order.id, order.firstName, order.lastName, order.phoneNumber, order.email,
         order.medication1, order.quantity1, order.medication2, order.quantity2, order.medication3, order.quantity3,
         order.Status, order.deliveryDate
-      ].map(v => String(v ?? "").toLowerCase());
-      return values.some(v => v.includes(t));
+      ].some(v => String(v ?? "").toLowerCase().includes(t));
     }
 
     async function phSearch() {
       const term = phSearchInput.value.trim();
-      phSearchResults.innerHTML = "";
-      phSearchMsg.textContent = "";
-
-      if (!term) {
-        phSearchMsg.textContent = "Ingrese un criterio para buscar.";
-        phSearchMsg.className = "msg err";
-        return;
-      }
-
+      phSearchResults.innerHTML = ""; phSearchMsg.textContent = "";
+      if (!term) { phSearchMsg.textContent = "Ingrese un criterio para buscar."; phSearchMsg.className = "msg err"; return; }
       try {
         const data = await phFetchAll();
         const matches = data.filter(o => phMatches(o, term));
-        if (!matches.length) {
-          phSearchMsg.textContent = "No se encontraron pedidos.";
-          phSearchMsg.className = "msg";
-          return;
-        }
-        phSearchResults.innerHTML = matches.map(o => phCardHTML(o, false)).join("");
+        if (!matches.length) { phSearchMsg.textContent = "No se encontraron pedidos."; phSearchMsg.className = "msg"; return; }
+        phSearchResults.innerHTML = matches.map(o => phCardHTML(o, true)).join(""); // con botones
         phSearchMsg.textContent = `Se encontraron ${matches.length} pedido(s).`;
         phSearchMsg.className = "msg ok";
       } catch (err) {
-        phSearchMsg.textContent = `Error al buscar: ${err.message}`;
-        phSearchMsg.className = "msg err";
+        phSearchMsg.textContent = `Error al buscar: ${err.message}`; phSearchMsg.className = "msg err";
       }
     }
-
     phSearchBtn.addEventListener("click", phSearch);
     phSearchInput.addEventListener("keydown", e => { if (e.key === "Enter") phSearch(); });
 
@@ -652,71 +547,111 @@
         "Entregado": document.getElementById("ph-col-delivered")
       };
       Object.values(cols).forEach(el => el.innerHTML = "");
-
       list.forEach(order => {
         const status = normalizePhStatus(order.Status);
         cols[status].insertAdjacentHTML("beforeend", phCardHTML(order, true));
       });
-
       document.getElementById("ph-count-requested").textContent = cols["Solicitado"].children.length;
       document.getElementById("ph-count-processing").textContent = cols["En proceso"].children.length;
       document.getElementById("ph-count-ready").textContent = cols["Listo para retirar"].children.length;
       document.getElementById("ph-count-delivered").textContent = cols["Entregado"].children.length;
-
       setPhButtonsDisabled(phUpdating);
     }
 
     async function loadPhDashboard() {
-      phDashMsg.textContent = "Cargando pedidos de farmacia...";
-      phDashMsg.className = "msg";
+      phDashMsg.textContent = "Cargando pedidos de farmacia..."; phDashMsg.className = "msg";
       try {
         PHARM_CACHE = await phFetchAll();
         renderPhDashboard(PHARM_CACHE);
-        phDashMsg.textContent = `Pedidos cargados: ${PHARM_CACHE.length}`;
-        phDashMsg.className = "msg ok";
+        phDashMsg.textContent = `Pedidos cargados: ${PHARM_CACHE.length}`; phDashMsg.className = "msg ok";
       } catch (err) {
-        phDashMsg.textContent = `Error cargando dashboard de farmacia: ${err.message}`;
-        phDashMsg.className = "msg err";
+        phDashMsg.textContent = `Error cargando dashboard de farmacia: ${err.message}`; phDashMsg.className = "msg err";
       }
     }
-
     phReloadBtn.addEventListener("click", loadPhDashboard);
 
     window.updatePhStatus = async function(id, newStatus) {
       if (phUpdating) return;
-
-      phUpdating = true;
-      setPhButtonsDisabled(true);
-      phDashMsg.textContent = `Actualizando pedido #${id} a "${newStatus}"...`;
-      phDashMsg.className = "msg";
-
+      phUpdating = true; setPhButtonsDisabled(true);
+      phDashMsg.textContent = `Actualizando pedido #${id} a "${newStatus}"...`; phDashMsg.className = "msg";
       try {
-        const order = PHARM_CACHE.find(o => String(o.id) === String(id));
-        if (!order) throw new Error("No se encontró el pedido en caché.");
-
+        const order = PHARM_CACHE.find(o => String(o.id) === String(id)) ||
+                      (await phFetchAll()).find(o => String(o.id) === String(id));
+        if (!order) throw new Error("No se encontró el pedido.");
         const updated = await phPut(order, newStatus);
 
         const idx = PHARM_CACHE.findIndex(o => String(o.id) === String(id));
         if (idx >= 0) PHARM_CACHE[idx] = updated;
 
         renderPhDashboard(PHARM_CACHE);
+        phDashMsg.textContent = `Pedido #${id} actualizado correctamente.`; phDashMsg.className = "msg ok";
 
-        phDashMsg.textContent = `Pedido #${id} actualizado correctamente.`;
-        phDashMsg.className = "msg ok";
+        // refrescar tarjetas de búsqueda/creada para reflejar estado nuevo
+        if (phSearchInput.value.trim()) phSearch();
+        if (document.querySelector(`#phCreatedCard [data-ph-id="${id}"]`)) {
+          phCreatedCard.innerHTML = phCardHTML(updated, true);
+        }
       } catch (err) {
-        phDashMsg.textContent = `No se pudo actualizar: ${err.message}`;
-        phDashMsg.className = "msg err";
+        phDashMsg.textContent = `No se pudo actualizar: ${err.message}`; phDashMsg.className = "msg err";
       } finally {
-        phUpdating = false;
-        setPhButtonsDisabled(false);
+        phUpdating = false; setPhButtonsDisabled(false);
       }
     };
+// --- Webhook Farmacia ---
+async function postPharmacyWebhook(updatedOrder) {
+  const res = await fetch(PHARM_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedOrder)
+  });
+  if (!res.ok) throw new Error(`Webhook Farmacia failed: ${res.status}`);
+  return res;
+}
 
+window.updatePhStatus = async function(id, newStatus) {
+  if (phUpdating) return;
+  phUpdating = true;
+  setPhButtonsDisabled(true);
+  phDashMsg.textContent = `Actualizando pedido #${id} a "${newStatus}"...`;
+  phDashMsg.className = "msg";
+
+  try {
+    const order = PHARM_CACHE.find(o => String(o.id) === String(id)) ||
+                  (await phFetchAll()).find(o => String(o.id) === String(id));
+
+    if (!order) throw new Error("No se encontró el pedido.");
+
+    // 1) PUT en MockAPI
+    const updated = await phPut(order, newStatus);
+
+    // 2) POST al webhook de Webex Connect
+    await postPharmacyWebhook(updated);
+
+    // 3) Refrescar caché + UI
+    const idx = PHARM_CACHE.findIndex(o => String(o.id) === String(id));
+    if (idx >= 0) PHARM_CACHE[idx] = updated;
+    else PHARM_CACHE.push(updated);
+
+    renderPhDashboard(PHARM_CACHE);
+
+    if (phSearchInput.value.trim()) await phSearch();
+
+    if (document.querySelector(`#phCreatedCard [data-ph-id="${id}"]`)) {
+      phCreatedCard.innerHTML = phCardHTML(updated, true);
+    }
+
+    phDashMsg.textContent = `Pedido #${id} actualizado y webhook enviado correctamente.`;
+    phDashMsg.className = "msg ok";
+  } catch (err) {
+    phDashMsg.textContent = `No se pudo actualizar: ${err.message}`;
+    phDashMsg.className = "msg err";
+  } finally {
+    phUpdating = false;
+    setPhButtonsDisabled(false);
+  }
+};
     loadDashboard();
     loadPhDashboard();
   </script>
-
-  <div id="divicw" data-bind="1F42F4B9-0EDA-4FC0-B22D-5A145FE73100" data-org="" data-guid="6a74adb6-2b9a-4bc1-810b-acc6333cc8bf"></div>
-  <script>{3}var i={t:function(){try{var e=document.getElementById("divicw"),t=document.createElement("script");t.src="https://media.imi.chat/widget/js/imichatinit.js?t="+new Date().toISOString(),e.insertAdjacentElement("afterend",t),t.addEventListener("load",function(){console.log(new Date().toISOString(),"Livechat script loaded successfully!")}),t.addEventListener("error",function(){console.log(new Date().toISOString(),"Error loading Livechat script");i.o(e)})}catch(e){console.error(e)}},o:function(e){e.insertAdjacentHTML("afterend",'<iframe id="tls_al_frm" frameborder="0" style="overflow:hidden;height:208px;width:394px;position:fixed;display:block;right:48px;bottom:12px;z-index:99999;display:none;"></iframe>');var t=document.getElementById("tls_al_frm"),n=t.contentWindow,d=n.document;d.open();d.write("<!doctype html><html><head><meta charset='utf-8'><title>Untitled Document</title><style>body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#99a0b0;font-size:14px}.popover__content{background-color:#fbfbfe;padding:1.5rem;border-radius:5px;width:300px;box-shadow:0 2px 5px 0 rgba(0,0,0,0.26);position:relative}.popover__message{font-weight:600;color:#56627c;font-size:16px}.pull-left{float:left}.clearfix{clear:both}.hdr-txt{width:218px;margin-top:3px}.para-txt a{text-decoration:none;color:#005cde}.close-btn{position:absolute;right:15px;top:15px}.close-btn a{text-decoration:none;font-weight:400;color:#56627c;font-size:16px}</style></head><body><div class='popover__content'><div class='close-btn'><a href='#' onclick='closeTLSAlert()'>X</a></div><div class='popover__message'><div class='pull-left hdr-txt'>This browser version is not supported on LiveChat.</div></div><div class='clearfix'></div><p class='para-txt'>Please update your browser to the latest version and re-open the website to access the widget.</p></div><script>function closeTLSAlert(){window.parent.postMessage({key:'close_tls_alert',value:'close_tls_alert',action:'close_tls_alert'},'*');}<\/script></body></html>");d.close();t.style.display='block';window.addEventListener('message',function(e){'close_tls_alert'===e.data.action&&i.s()})},s:function(){var e=document.getElementById('tls_al_frm');e&&e.remove()}};i.t();</script>
 </body>
 </html>
