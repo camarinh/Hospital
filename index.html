@@ -48,7 +48,7 @@
     .col-head{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;font-weight:700}
     .col-body{padding:10px;display:grid;gap:10px;align-content:start}
     .status-agendado{color:#60a5fa}.status-pendiente{color:var(--warning)}.status-confirmado{color:#4ade80}.status-cancelado{color:#f87171}
-    .status-requested{color:#60a5fa}.status-processing{color:#f59e0b}.status-ready{color:#4ade80}.status-delivered{color:#22c55e}
+    .status-solicitado{color:#60a5fa}.status-enproceso{color:#f59e0b}.status-listo{color:#4ade80}.status-entregado{color:#22c55e}
     .apt-actions{display:flex;gap:8px;flex-wrap:wrap}
     .btn-mini{padding:7px 9px;border-radius:8px;font-size:.8rem;border:1px solid var(--border);background:#111827;color:var(--text);cursor:pointer}
     .btn-mini:hover{border-color:#4b5563}
@@ -101,7 +101,6 @@
         <button class="tab" data-tab="pharmacyTab">Farmacia</button>
       </div>
 
-      <!-- TAB 1: Citas -->
       <div id="citasTab" class="tab-content active">
         <div class="search-row">
           <input id="emailInput" type="email" placeholder="Ingrese email del paciente" />
@@ -111,7 +110,6 @@
         <div id="searchMsg" class="msg"></div>
       </div>
 
-      <!-- TAB 2: Dashboard Citas -->
       <div id="dashboardTab" class="tab-content">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
           <div class="msg" style="margin:0">Actualización por <strong>PUT</strong> + Webhook POST</div>
@@ -128,10 +126,8 @@
         <div id="dashMsg" class="msg"></div>
       </div>
 
-      <!-- TAB 3: Farmacia -->
       <div id="pharmacyTab" class="tab-content">
         <div class="pharm-grid">
-          <!-- Left: New Order -->
           <div class="pharm-panel">
             <h4>Nuevo Pedido de Farmacia</h4>
             <div class="field-grid">
@@ -155,38 +151,37 @@
             </div>
 
             <datalist id="medicationsList">
-              <option value="Ibuprofen"></option>
+              <option value="Ibuprofeno"></option>
               <option value="Paracetamol"></option>
-              <option value="Loratadine"></option>
-              <option value="Cetirizine"></option>
-              <option value="Vitamin C"></option>
-              <option value="Aspirin"></option>
-              <option value="Naproxen"></option>
-              <option value="Omeprazole"></option>
-              <option value="Famotidine"></option>
-              <option value="Dextromethorphan"></option>
-              <option value="Guaifenesin"></option>
-              <option value="Diphenhydramine"></option>
-              <option value="Pseudoephedrine"></option>
-              <option value="Loperamide"></option>
-              <option value="Bismuth Subsalicylate"></option>
-              <option value="Calcium Carbonate"></option>
-              <option value="Magnesium Hydroxide"></option>
-              <option value="Dimenhydrinate"></option>
-              <option value="Hydrocortisone Cream"></option>
-              <option value="Clotrimazole Cream"></option>
+              <option value="Loratadina"></option>
+              <option value="Cetirizina"></option>
+              <option value="Vitamina C"></option>
+              <option value="Ácido acetilsalicílico"></option>
+              <option value="Naproxeno"></option>
+              <option value="Omeprazol"></option>
+              <option value="Famotidina"></option>
+              <option value="Dextrometorfano"></option>
+              <option value="Guaifenesina"></option>
+              <option value="Difenhidramina"></option>
+              <option value="Pseudoefedrina"></option>
+              <option value="Loperamida"></option>
+              <option value="Subsalicilato de bismuto"></option>
+              <option value="Carbonato de calcio"></option>
+              <option value="Hidróxido de magnesio"></option>
+              <option value="Dimenhidrinato"></option>
+              <option value="Hidrocortisona crema"></option>
+              <option value="Clotrimazol crema"></option>
             </datalist>
 
             <div class="actions-row">
-              <button id="phRequestBtn" class="btn btn-success">Request</button>
-              <button id="phClearBtn" class="btn btn-info">Clear</button>
+              <button id="phRequestBtn" class="btn btn-success">Solicitar</button>
+              <button id="phClearBtn" class="btn btn-info">Limpiar</button>
             </div>
-            <div class="subtle">Estado se asigna automáticamente como <strong>Requested</strong>. Fecha de entrega: próximo día calendario.</div>
+            <div class="subtle">Estado se asigna automáticamente como <strong>Solicitado</strong>. Fecha de entrega: próximo día calendario.</div>
             <div id="phCreateMsg" class="msg"></div>
             <div id="phCreatedCard" class="result-list" style="margin-top:10px"></div>
           </div>
 
-          <!-- Right: Search -->
           <div class="pharm-panel">
             <h4>Buscar Pedidos</h4>
             <div class="search-row" style="margin-bottom:10px;">
@@ -205,19 +200,19 @@
 
         <div class="kanban">
           <div class="col">
-            <div class="col-head status-requested">Requested <span id="ph-count-requested">0</span></div>
+            <div class="col-head status-solicitado">Solicitado <span id="ph-count-requested">0</span></div>
             <div id="ph-col-requested" class="col-body"></div>
           </div>
           <div class="col">
-            <div class="col-head status-processing">Processing <span id="ph-count-processing">0</span></div>
+            <div class="col-head status-enproceso">En proceso <span id="ph-count-processing">0</span></div>
             <div id="ph-col-processing" class="col-body"></div>
           </div>
           <div class="col">
-            <div class="col-head status-ready">Ready for pickup <span id="ph-count-ready">0</span></div>
+            <div class="col-head status-listo">Listo para retirar <span id="ph-count-ready">0</span></div>
             <div id="ph-col-ready" class="col-body"></div>
           </div>
           <div class="col">
-            <div class="col-head status-delivered">Delivered <span id="ph-count-delivered">0</span></div>
+            <div class="col-head status-entregado">Entregado <span id="ph-count-delivered">0</span></div>
             <div id="ph-col-delivered" class="col-body"></div>
           </div>
         </div>
@@ -227,16 +222,12 @@
   </main>
 
   <script>
-    /* ==========================
-       ORIGINAL APPOINTMENTS CODE
-       ========================== */
     const API_BASE = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Appointments";
     const WEBHOOK_URL = "https://hooks.us.webexconnect.io/events/P0A7E5ZV0L";
 
     let APPOINTMENTS_CACHE = [];
     let isUpdating = false;
 
-    // Tabs
     document.querySelectorAll(".tab").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
@@ -246,7 +237,6 @@
       });
     });
 
-    // Copy
     const copyMsg = document.getElementById("copyMsg");
     document.querySelectorAll("[data-copy]").forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -429,9 +419,6 @@
       }
     };
 
-    /* ==========================
-       PHARMACY ADDITION (TAB 3)
-       ========================== */
     const PHARM_API = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Pharmacy";
 
     let PHARM_CACHE = [];
@@ -504,8 +491,8 @@
 
     function phCardHTML(order, forDashboard = false) {
       const id = order.id ?? "-";
-      const status = String(order.Status || "Requested");
-      const nextButtons = ["Requested", "Processing", "Ready for pickup", "Delivered"]
+      const status = String(order.Status || "Solicitado");
+      const nextButtons = ["Solicitado", "En proceso", "Listo para retirar", "Entregado"]
         .filter(s => s !== status)
         .map(s => `<button class="btn-mini btn-mini-ph" onclick="updatePhStatus('${id}','${s}')" ${phUpdating ? "disabled" : ""}>${s}</button>`)
         .join("");
@@ -586,7 +573,7 @@
         quantity2: m2.quantity,
         medication3: m3.medication,
         quantity3: m3.quantity,
-        Status: "Requested",
+        Status: "Solicitado",
         deliveryDate: mmddyyyyTomorrow()
       };
 
@@ -645,11 +632,11 @@
 
     function normalizePhStatus(s = "") {
       const v = String(s).trim().toLowerCase();
-      if (v === "requested") return "Requested";
-      if (v === "processing") return "Processing";
-      if (v === "ready for pickup") return "Ready for pickup";
-      if (v === "delivered") return "Delivered";
-      return "Requested";
+      if (v === "solicitado") return "Solicitado";
+      if (v === "en proceso") return "En proceso";
+      if (v === "listo para retirar") return "Listo para retirar";
+      if (v === "entregado") return "Entregado";
+      return "Solicitado";
     }
 
     function setPhButtonsDisabled(disabled) {
@@ -659,10 +646,10 @@
 
     function renderPhDashboard(list) {
       const cols = {
-        "Requested": document.getElementById("ph-col-requested"),
-        "Processing": document.getElementById("ph-col-processing"),
-        "Ready for pickup": document.getElementById("ph-col-ready"),
-        "Delivered": document.getElementById("ph-col-delivered")
+        "Solicitado": document.getElementById("ph-col-requested"),
+        "En proceso": document.getElementById("ph-col-processing"),
+        "Listo para retirar": document.getElementById("ph-col-ready"),
+        "Entregado": document.getElementById("ph-col-delivered")
       };
       Object.values(cols).forEach(el => el.innerHTML = "");
 
@@ -671,10 +658,10 @@
         cols[status].insertAdjacentHTML("beforeend", phCardHTML(order, true));
       });
 
-      document.getElementById("ph-count-requested").textContent = cols["Requested"].children.length;
-      document.getElementById("ph-count-processing").textContent = cols["Processing"].children.length;
-      document.getElementById("ph-count-ready").textContent = cols["Ready for pickup"].children.length;
-      document.getElementById("ph-count-delivered").textContent = cols["Delivered"].children.length;
+      document.getElementById("ph-count-requested").textContent = cols["Solicitado"].children.length;
+      document.getElementById("ph-count-processing").textContent = cols["En proceso"].children.length;
+      document.getElementById("ph-count-ready").textContent = cols["Listo para retirar"].children.length;
+      document.getElementById("ph-count-delivered").textContent = cols["Entregado"].children.length;
 
       setPhButtonsDisabled(phUpdating);
     }
@@ -725,7 +712,6 @@
       }
     };
 
-    // Initial load
     loadDashboard();
     loadPhDashboard();
   </script>
