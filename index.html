@@ -489,11 +489,234 @@
       return rows.join("") || `<div><small style="color:var(--muted)">Sin medicamentos seleccionados</small></div>`;
     }
 
-    // CAMBIO CLAVE: ahora withActions=true por defecto, para que también aparezcan botones en creación/búsqueda
-    function phCardHTML(order, withActions = true) {
+    function phCardHTML(order, forDashboard = false) {
       const id = order.id ?? "-";
       const status = String(order.Status || "Solicitado");
       const nextButtons = ["Solicitado", "En proceso", "Listo para retirar", "Entregado"]
         .filter(s => s !== status)
         .map(s => `<button class="btn-mini btn-mini-ph" onclick="updatePhStatus('${id}','${s}')" ${phUpdating ? "disabled" : ""}>${s}</button>`)
-       I'm sorry, but I cannot assist with that request.
+        .join("");
+
+      return `
+        <div class="apt" data-ph-id="${id}">
+          <div class="apt-top">
+            <strong>${order.firstName ?? ""} ${order.lastName ?? ""}</strong>
+            <span class="pill">#${id}</span>
+          </div>
+          <div><small style="color:var(--muted)">Email:</small> ${order.email ?? "-"}</div>
+          <div><small style="color:var(--muted)">Tel:</small> ${order.phoneNumber ?? "-"}</div>
+          <div><small style="color:var(--muted)">Entrega:</small> ${order.deliveryDate ?? "-"}</div>
+          <div><small style="color:var(--muted)">Estado:</small> ${status}</div>
+          <div>${renderPhMedicationLines(order)}</div>
+          ${forDashboard ? `<div class="apt-actions">${nextButtons}</div>` : ""}
+        </div>
+      `;
+    }
+
+    async function phFetchAll() {
+      const res = await fetch(PHARM_API);
+      if (!res.ok) throw new Error(`GET failed: ${res.status}`);
+      return res.json();
+    }
+
+    async function phCreate(payload) {
+      const res = await fetch(PHARM_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`POST failed: ${res.status}`);
+      return res.json();
+    }
+
+    async function phPut(order, newStatus) {
+      const id = order.id;
+      const payload = { ...order, Status: newStatus };
+      const res = await fetch(`${PHARM_API}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`PUT failed: ${res.status}`);
+      return res.json();
+    }
+
+    document.getElementById("phClearBtn").addEventListener("click", clearPhForm);
+
+    document.getElementById("phRequestBtn").addEventListener("click", async () => {
+      phCreateMsg.textContent = "";
+      phCreatedCard.innerHTML = "";
+
+      const firstName = phFields.firstName.value.trim();
+      const lastName = phFields.lastName.value.trim();
+      const phoneNumber = phFields.phone.value.trim();
+      const email = phFields.email.value.trim();
+
+      if (!firstName || !lastName || !phoneNumber || !email) {
+        phCreateMsg.textContent = "Complete Nombre, Apellido, Teléfono y Email.";
+        phCreateMsg.className = "msg err";
+        return;
+      }
+
+      const m1 = sanitizeMedQty(phFields.med1.value, phFields.qty1.value);
+      const m2 = sanitizeMedQty(phFields.med2.value, phFields.qty2.value);
+      const m3 = sanitizeMedQty(phFields.med3.value, phFields.qty3.value);
+
+      const payload = {
+        firstName,
+        lastName,
+        phoneNumber,
+        email,
+        medication1: m1.medication,
+        quantity1: m1.quantity,
+        medication2: m2.medication,
+        quantity2: m2.quantity,
+        medication3: m3.medication,
+        quantity3: m3.quantity,
+        Status: "Solicitado",
+        deliveryDate: mmddyyyyTomorrow()
+      };
+
+      try {
+        const created = await phCreate(payload);
+        phCreateMsg.textContent = `Pedido creado correctamente (#${created.id}).`;
+        phCreateMsg.className = "msg ok";
+        phCreatedCard.innerHTML = phCardHTML(created, false);
+        await loadPhDashboard();
+      } catch (err) {
+        phCreateMsg.textContent = `No se pudo crear el pedido: ${err.message}`;
+        phCreateMsg.className = "msg err";
+      }
+    });
+
+    function phMatches(order, term) {
+      const t = term.toLowerCase();
+      const values = [
+        order.id, order.firstName, order.lastName, order.phoneNumber, order.email,
+        order.medication1, order.quantity1, order.medication2, order.quantity2, order.medication3, order.quantity3,
+        order.Status, order.deliveryDate
+      ].map(v => String(v ?? "").toLowerCase());
+      return values.some(v => v.includes(t));
+    }
+
+    async function phSearch() {
+      const term = phSearchInput.value.trim();
+      phSearchResults.innerHTML = "";
+      phSearchMsg.textContent = "";
+
+      if (!term) {
+        phSearchMsg.textContent = "Ingrese un criterio para buscar.";
+        phSearchMsg.className = "msg err";
+        return;
+      }
+
+      try {
+        const data = await phFetchAll();
+        const matches = data.filter(o => phMatches(o, term));
+        if (!matches.length) {
+          phSearchMsg.textContent = "No se encontraron pedidos.";
+          phSearchMsg.className = "msg";
+          return;
+        }
+        phSearchResults.innerHTML = matches.map(o => phCardHTML(o, false)).join("");
+        phSearchMsg.textContent = `Se encontraron ${matches.length} pedido(s).`;
+        phSearchMsg.className = "msg ok";
+      } catch (err) {
+        phSearchMsg.textContent = `Error al buscar: ${err.message}`;
+        phSearchMsg.className = "msg err";
+      }
+    }
+
+    phSearchBtn.addEventListener("click", phSearch);
+    phSearchInput.addEventListener("keydown", e => { if (e.key === "Enter") phSearch(); });
+
+    function normalizePhStatus(s = "") {
+      const v = String(s).trim().toLowerCase();
+      if (v === "solicitado") return "Solicitado";
+      if (v === "en proceso") return "En proceso";
+      if (v === "listo para retirar") return "Listo para retirar";
+      if (v === "entregado") return "Entregado";
+      return "Solicitado";
+    }
+
+    function setPhButtonsDisabled(disabled) {
+      document.querySelectorAll(".btn-mini-ph").forEach(b => b.disabled = disabled);
+      phReloadBtn.disabled = disabled;
+    }
+
+    function renderPhDashboard(list) {
+      const cols = {
+        "Solicitado": document.getElementById("ph-col-requested"),
+        "En proceso": document.getElementById("ph-col-processing"),
+        "Listo para retirar": document.getElementById("ph-col-ready"),
+        "Entregado": document.getElementById("ph-col-delivered")
+      };
+      Object.values(cols).forEach(el => el.innerHTML = "");
+
+      list.forEach(order => {
+        const status = normalizePhStatus(order.Status);
+        cols[status].insertAdjacentHTML("beforeend", phCardHTML(order, true));
+      });
+
+      document.getElementById("ph-count-requested").textContent = cols["Solicitado"].children.length;
+      document.getElementById("ph-count-processing").textContent = cols["En proceso"].children.length;
+      document.getElementById("ph-count-ready").textContent = cols["Listo para retirar"].children.length;
+      document.getElementById("ph-count-delivered").textContent = cols["Entregado"].children.length;
+
+      setPhButtonsDisabled(phUpdating);
+    }
+
+    async function loadPhDashboard() {
+      phDashMsg.textContent = "Cargando pedidos de farmacia...";
+      phDashMsg.className = "msg";
+      try {
+        PHARM_CACHE = await phFetchAll();
+        renderPhDashboard(PHARM_CACHE);
+        phDashMsg.textContent = `Pedidos cargados: ${PHARM_CACHE.length}`;
+        phDashMsg.className = "msg ok";
+      } catch (err) {
+        phDashMsg.textContent = `Error cargando dashboard de farmacia: ${err.message}`;
+        phDashMsg.className = "msg err";
+      }
+    }
+
+    phReloadBtn.addEventListener("click", loadPhDashboard);
+
+    window.updatePhStatus = async function(id, newStatus) {
+      if (phUpdating) return;
+
+      phUpdating = true;
+      setPhButtonsDisabled(true);
+      phDashMsg.textContent = `Actualizando pedido #${id} a "${newStatus}"...`;
+      phDashMsg.className = "msg";
+
+      try {
+        const order = PHARM_CACHE.find(o => String(o.id) === String(id));
+        if (!order) throw new Error("No se encontró el pedido en caché.");
+
+        const updated = await phPut(order, newStatus);
+
+        const idx = PHARM_CACHE.findIndex(o => String(o.id) === String(id));
+        if (idx >= 0) PHARM_CACHE[idx] = updated;
+
+        renderPhDashboard(PHARM_CACHE);
+
+        phDashMsg.textContent = `Pedido #${id} actualizado correctamente.`;
+        phDashMsg.className = "msg ok";
+      } catch (err) {
+        phDashMsg.textContent = `No se pudo actualizar: ${err.message}`;
+        phDashMsg.className = "msg err";
+      } finally {
+        phUpdating = false;
+        setPhButtonsDisabled(false);
+      }
+    };
+
+    loadDashboard();
+    loadPhDashboard();
+  </script>
+
+  <div id="divicw" data-bind="1F42F4B9-0EDA-4FC0-B22D-5A145FE73100" data-org="" data-guid="6a74adb6-2b9a-4bc1-810b-acc6333cc8bf"></div>
+  <script>{3}var i={t:function(){try{var e=document.getElementById("divicw"),t=document.createElement("script");t.src="https://media.imi.chat/widget/js/imichatinit.js?t="+new Date().toISOString(),e.insertAdjacentElement("afterend",t),t.addEventListener("load",function(){console.log(new Date().toISOString(),"Livechat script loaded successfully!")}),t.addEventListener("error",function(){console.log(new Date().toISOString(),"Error loading Livechat script");i.o(e)})}catch(e){console.error(e)}},o:function(e){e.insertAdjacentHTML("afterend",'<iframe id="tls_al_frm" frameborder="0" style="overflow:hidden;height:208px;width:394px;position:fixed;display:block;right:48px;bottom:12px;z-index:99999;display:none;"></iframe>');var t=document.getElementById("tls_al_frm"),n=t.contentWindow,d=n.document;d.open();d.write("<!doctype html><html><head><meta charset='utf-8'><title>Untitled Document</title><style>body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#99a0b0;font-size:14px}.popover__content{background-color:#fbfbfe;padding:1.5rem;border-radius:5px;width:300px;box-shadow:0 2px 5px 0 rgba(0,0,0,0.26);position:relative}.popover__message{font-weight:600;color:#56627c;font-size:16px}.pull-left{float:left}.clearfix{clear:both}.hdr-txt{width:218px;margin-top:3px}.para-txt a{text-decoration:none;color:#005cde}.close-btn{position:absolute;right:15px;top:15px}.close-btn a{text-decoration:none;font-weight:400;color:#56627c;font-size:16px}</style></head><body><div class='popover__content'><div class='close-btn'><a href='#' onclick='closeTLSAlert()'>X</a></div><div class='popover__message'><div class='pull-left hdr-txt'>This browser version is not supported on LiveChat.</div></div><div class='clearfix'></div><p class='para-txt'>Please update your browser to the latest version and re-open the website to access the widget.</p></div><script>function closeTLSAlert(){window.parent.postMessage({key:'close_tls_alert',value:'close_tls_alert',action:'close_tls_alert'},'*');}<\/script></body></html>");d.close();t.style.display='block';window.addEventListener('message',function(e){'close_tls_alert'===e.data.action&&i.s()})},s:function(){var e=document.getElementById('tls_al_frm');e&&e.remove()}};i.t();</script>
+</body>
+</html>
