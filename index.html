@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hospital Nacional - Gestión Integral</title>
+  <title>Hospital Nacional - Sistema Integrado</title>
   <style>
     :root{
       --bg:#0f172a; --panel:#111827; --card:#1f2937; --muted:#94a3b8; --text:#e5e7eb;
@@ -29,9 +29,9 @@
     .btn-clear{background:#475569}
     .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;overflow-x:auto;margin-top:20px}
     .col{min-height:300px;background:#0b1220;border-radius:10px;padding:10px}
-    .apt{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;font-size:0.9rem}
-    .status-pill{font-size:0.7rem;padding:2px 8px;border-radius:10px;background:var(--border)}
+    .apt{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;font-size:0.85rem}
     .btn-mini{padding:4px 8px;font-size:0.7rem;margin-top:5px;cursor:pointer;background:var(--border);color:white;border:none;border-radius:4px}
+    .msg{margin-top:10px;color:var(--muted);font-size:.9rem}
   </style>
 </head>
 <body>
@@ -49,9 +49,24 @@
         <button class="tab" data-tab="pharmacyTab">Farmacia</button>
       </div>
 
-      <div id="citasTab" class="tab-content active">...</div>
-      <div id="dashboardTab" class="tab-content">...</div>
+      <!-- Citas Tab -->
+      <div id="citasTab" class="tab-content active">
+        <input id="emailInput" type="email" placeholder="Ingrese email del paciente" />
+        <button id="searchBtn" class="btn">Buscar Citas</button>
+        <div id="searchResults" style="margin-top:15px"></div>
+      </div>
+
+      <!-- Dashboard Citas Tab -->
+      <div id="dashboardTab" class="tab-content">
+        <div class="kanban" id="apt-kanban">
+          <div class="col"><h4>Agendado</h4><div id="col-agendado"></div></div>
+          <div class="col"><h4>Pendiente</h4><div id="col-pendiente"></div></div>
+          <div class="col"><h4>Confirmado</h4><div id="col-confirmado"></div></div>
+          <div class="col"><h4>Cancelado</h4><div id="col-cancelado"></div></div>
+        </div>
+      </div>
       
+      <!-- Pharmacy Tab -->
       <div id="pharmacyTab" class="tab-content">
         <div class="grid-2">
           <div>
@@ -60,18 +75,16 @@
             <input id="p-last" placeholder="Apellido">
             <input id="p-phone" placeholder="Teléfono">
             <input id="p-email" placeholder="Email">
-            <div id="med-inputs">
-              <input list="meds" id="m1" placeholder="Medicina 1"><input type="number" id="q1" value="0" placeholder="Cant">
-              <input list="meds" id="m2" placeholder="Medicina 2"><input type="number" id="q2" value="0" placeholder="Cant">
-              <input list="meds" id="m3" placeholder="Medicina 3"><input type="number" id="q3" value="0" placeholder="Cant">
-            </div>
+            <input list="meds" id="m1" placeholder="Medicina 1"><input type="number" id="q1" value="0">
+            <input list="meds" id="m2" placeholder="Medicina 2"><input type="number" id="q2" value="0">
+            <input list="meds" id="m3" placeholder="Medicina 3"><input type="number" id="q3" value="0">
             <button class="btn" onclick="submitOrder()">Request</button>
             <button class="btn btn-clear" onclick="clearForm()">Clear</button>
           </div>
           <div>
             <h3>Buscar Pedidos</h3>
-            <input id="search-pharm" placeholder="Buscar por nombre o email...">
-            <div id="search-results"></div>
+            <input id="search-pharm" placeholder="Buscar por nombre o email..." oninput="searchPharmacy()">
+            <div id="search-results-pharm"></div>
           </div>
         </div>
         <div class="kanban" id="pharm-kanban">
@@ -85,22 +98,24 @@
   </main>
 
   <datalist id="meds">
-    <option value="Ibuprofen"> <option value="Paracetamol"> <option value="Loratadine"> <option value="Cetirizine"> <option value="Vitamin C">
-    <option value="Aspirin"> <option value="Omeprazole"> <option value="Naproxen"> <option value="Diphenhydramine"> <option value="Pseudoephedrine">
-    <option value="Guaifenesin"> <option value="Dextromethorphan"> <option value="Calcium"> <option value="Magnesium"> <option value="Zinc">
-    <option value="Multivitamin"> <option value="Antacid"> <option value="Hydrocortisone"> <option value="Clotrimazole"> <option value="Petroleum Jelly">
+    <option value="Ibuprofen"><option value="Paracetamol"><option value="Loratadine"><option value="Cetirizine"><option value="Vitamin C">
+    <option value="Aspirin"><option value="Omeprazole"><option value="Naproxen"><option value="Diphenhydramine"><option value="Pseudoephedrine">
+    <option value="Guaifenesin"><option value="Dextromethorphan"><option value="Calcium"><option value="Magnesium"><option value="Zinc">
+    <option value="Multivitamin"><option value="Antacid"><option value="Hydrocortisone"><option value="Clotrimazole"><option value="Petroleum Jelly">
   </datalist>
 
   <script>
+    const APT_API = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Appointments";
     const PHARM_API = "https://69bc968a2bc2a25b22abe58e.mockapi.io/hospital/v1/Pharmacy";
 
-    // Tab switcher
+    // Tab Logic
     document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", (e) => {
       document.querySelectorAll(".tab, .tab-content").forEach(el => el.classList.remove("active"));
       e.target.classList.add("active");
       document.getElementById(e.target.dataset.tab).classList.add("active");
     }));
 
+    // --- Pharmacy Logic ---
     async function submitOrder() {
       const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
       const payload = {
@@ -121,7 +136,7 @@
       loadPharmacy();
     }
 
-    function renderCard(apt) {
+    function renderPharmCard(apt) {
       let meds = "";
       for(let i=1; i<=3; i++) {
         if(apt["medication"+i] && apt["medication"+i] !== "N/A" && apt["quantity"+i] > 0)
@@ -129,12 +144,10 @@
       }
       return `
         <div class="apt">
-          <strong>${apt.firstName} ${apt.lastName}</strong><br>
-          ${meds}
-          <div style="margin-top:5px">Status: ${apt.Status}</div>
-          <button class="btn-mini" onclick="updateStatus('${apt.id}', 'Processing')">Proc</button>
-          <button class="btn-mini" onclick="updateStatus('${apt.id}', 'Ready for pickup')">Ready</button>
-          <button class="btn-mini" onclick="updateStatus('${apt.id}', 'Delivered')">Done</button>
+          <strong>${apt.firstName} ${apt.lastName}</strong><br>${meds}
+          <button class="btn-mini" onclick="updatePharmStatus('${apt.id}', 'Processing')">Proc</button>
+          <button class="btn-mini" onclick="updatePharmStatus('${apt.id}', 'Ready for pickup')">Ready</button>
+          <button class="btn-mini" onclick="updatePharmStatus('${apt.id}', 'Delivered')">Done</button>
         </div>`;
     }
 
@@ -144,23 +157,37 @@
       document.querySelectorAll(".col .list").forEach(l => l.innerHTML = "");
       data.forEach(apt => {
         const col = document.querySelector(`.col[data-status="${apt.Status}"] .list`);
-        if(col) col.insertAdjacentHTML("beforeend", renderCard(apt));
+        if(col) col.insertAdjacentHTML("beforeend", renderPharmCard(apt));
       });
     }
 
-    async function updateStatus(id, newStatus) {
-      const res = await fetch(`${PHARM_API}/${id}`, {
-        method: "PUT", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({Status: newStatus})
-      });
+    async function updatePharmStatus(id, newStatus) {
+      await fetch(`${PHARM_API}/${id}`, { method: "PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify({Status: newStatus}) });
       loadPharmacy();
     }
 
-    function clearForm() {
-      document.querySelectorAll("input").forEach(i => i.value = "");
+    function clearForm() { document.querySelectorAll("input").forEach(i => i.value = ""); }
+
+    // --- Appointment Logic (Simplified) ---
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+      const email = document.getElementById("emailInput").value;
+      const res = await fetch(APT_API);
+      const data = await res.json();
+      const matches = data.filter(a => a.email === email);
+      document.getElementById("searchResults").innerHTML = matches.map(a => `<div class="apt">${a.firstName} ${a.lastName} - ${a.appointmentDate}</div>`).join("");
+    });
+
+    async function loadAptDashboard() {
+      const res = await fetch(APT_API);
+      const data = await res.json();
+      data.forEach(a => {
+        const col = document.getElementById(`col-${a.appointmentStatus.toLowerCase()}`);
+        if(col) col.insertAdjacentHTML("beforeend", `<div class="apt">${a.firstName} ${a.lastName}</div>`);
+      });
     }
 
     loadPharmacy();
+    loadAptDashboard();
   </script>
 </body>
 </html>
